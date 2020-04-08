@@ -1,0 +1,33 @@
+FROM quay.io/jupyter-notebooks-arm/base-notebook:latest
+
+LABEL maintainer="Dan Clark <danclark@redhat.com>"
+
+USER root
+
+# Install all OS dependencies for fully functional notebook server
+RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
+ && dnf -y install 'dnf-command(config-manager)' \
+ && dnf config-manager --set-enabled PowerTools \
+ && dnf --setopt tsflags=nodocs --disableplugin=subscription-manager -y install \
+    git \
+    inkscape \
+#    jed \
+    libSM \
+    libXext-devel \
+    libXrender \
+#    lmodern \
+    nmap-ncat \
+    pandoc \
+    python36 \
+    python36-devel \
+    texlive-collection-fontsrecommended \
+    texlive-collection-latexrecommended \
+    texlive-xetex \
+    tzdata \
+    unzip \
+  && dnf clean all \
+  && rm -rf /var/cache/dnf
+
+# Switch back to jovyan to avoid accidental container runs as root
+USER $NB_UID
+

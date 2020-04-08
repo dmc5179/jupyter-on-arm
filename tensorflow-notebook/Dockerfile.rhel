@@ -1,0 +1,21 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+FROM quay.io/jupyter-notebooks-arm/scipy-notebook:latest
+
+LABEL maintainer="Dan Clark <danclark@redhat.com>"
+
+USER $NB_USER
+
+# Install Tensorflow
+RUN conda install --quiet --yes \
+    'tensorflow=1.12*' \
+    'keras=2.2*' && \
+    conda build purge-all
+
+USER root
+
+RUN  fix-permissions $CONDA_DIR \
+  && fix-permissions /home/$NB_USER
+
+USER $NB_USER
+
