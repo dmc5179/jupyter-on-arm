@@ -1,7 +1,8 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-FROM registry.access.redhat.com/ubi8/ubi:latest
+#FROM registry.access.redhat.com/ubi8/ubi:latest
+FROM docker.io/library/centos:8
 
 LABEL maintainer="Dan Clark <danclark@redhat.com>"
 ARG NB_USER="jovyan"
@@ -18,7 +19,6 @@ RUN dnf --setopt tsflags=nodocs -y update && \
   wget \
   bzip2 \
   ca-certificates \
-  sudo \
   python3 python3-devel python3-pip \
   libffi-devel openssl-devel \
   && dnf clean all \
@@ -86,9 +86,9 @@ USER $NB_UID
 #RUN fix-permissions $CONDA_DIR && \
 #    fix-permissions /home/$NB_USER
 
-#USER $NB_UID
+USER $NB_UID
 
-RUN pip3 --no-cache-dir install --user 'notebook==6.0.0' 'jupyterhub==1.0.0' 'jupyterlab==1.0.4' \
+RUN pip3 --no-cache-dir install --user 'notebook==6.0.3' 'jupyterhub==1.1.0' 'jupyterlab==2.0.1' \
  && jupyter notebook --generate-config
 
 # Install Jupyter Notebook, Lab, and Hub
@@ -115,7 +115,7 @@ RUN pip3 --no-cache-dir install --user 'notebook==6.0.0' 'jupyterhub==1.0.0' 'ju
 EXPOSE 8888
 WORKDIR $HOME
 
-USER root
+#USER root
 
 # Add local files as late as possible to avoid cache busting
 COPY start.sh /usr/local/bin/
